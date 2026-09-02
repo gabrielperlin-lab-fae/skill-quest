@@ -30,3 +30,5 @@ A Loja exibiu saldo de 124 moedas, quatro recompensas virtuais e o aviso de que 
 A Home abriu o desafio coletivo para a tela de equipe com meta de 78%, 240 XP restantes, CTA de missões e ranking por contribuição. A copy explicita que é parceria, não competição entre departamentos; a tela também mostra o badge coletivo a ser desbloqueado.
 
 O painel de liderança abriu pelo ícone de configurações do Perfil e exibiu adesão, usuários ativos, lições concluídas, aplicações reais, maturidade inicial versus nova avaliação, conclusão por trilha e foco por área. A tela conecta o indicador mais importante — evolução da maturidade digital — aos gaps de Estoque, Expedição e Logística.
+
+Adaptação BRW validada visualmente: a logo oficial “BRW Sports Group” aparece no cabeçalho junto do produto Skill Quest; o onboarding ganhou fundo grafite/preto, tipografia branca, acentos verde-lima e CTAs de alta energia; a Home ganhou topbar escura, card de meta escuro e progresso lime. O resultado mantém legibilidade e a identidade de plataforma de esporte + tecnologia.

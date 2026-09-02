@@ -113,3 +113,44 @@ h1, h2, h3, .brand { font-family: "Outfit", "DM Sans", sans-serif; letter-spacin
  .top-stats .stat-pill b { font-size: 11px; }.greeting-row h1 { font-size: 27px; }.hero-streak-card { padding: 9px; }.mission-main { width: calc(100% - 61px); }.mission-rewards { gap: 7px; }.map-header h1 { font-size: 31px; }.node-tooltip { width: 113px; white-space: normal; line-height: 1.25; }.node-one { left: 17%; }.node-two { right: 13%; }.node-three { left: 22%; }.node-four { right: 15%; }.node-five { left: 39%; }.world-banner { padding: 11px; }.world-banner button { padding: 7px; font-size: 10px; }.team-hero { padding: 23px; }.team-challenge { padding: 15px; }.maturity-score b { font-size: 34px; }.horizontal-bars > div { grid-template-columns: 95px 1fr 28px; }.sector-list > div { grid-template-columns: 10px 67px 1fr; }.sector-list strong { display: none; } }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+
+
+/* BRW Sports Group identity layer */
+:root { --lime: #c5f12b; --brw-black: #050806; --brw-green: #0b160d; }
+.app-canvas { background: radial-gradient(circle at 8% 10%, rgba(197,241,43,.16), transparent 21rem), radial-gradient(circle at 91% 85%, rgba(197,241,43,.08), transparent 24rem), var(--brw-black); }
+.app-shell { border-color: rgba(197,241,43,.18); box-shadow: 0 28px 80px rgba(0,0,0,.48); }
+.primary-button { background: var(--lime); color: #11170d; box-shadow: 0 7px 0 #718c13, 0 13px 22px rgba(130,158,20,.22); }
+.primary-button:hover { background: #d7ff3c; }
+.brand-logo-img { width: 68px; height: 38px; object-fit: contain; }
+.brand-divider { background: currentColor; opacity: .3; }
+.brand-product { font-size: 20px; letter-spacing: -.08em; }
+.brand-product > span { color: var(--blue); }
+.brand-compact .brand-logo-img { width: 60px; height: 32px; }
+.brand-compact .brand-product { font-size: 16px; }
+.topbar { color: white; background: rgba(5,8,6,.96); border-bottom-color: rgba(197,241,43,.16); }
+.topbar .brand { color: white; }
+.topbar .brand-product > span { color: var(--lime); }
+.topbar .icon-button { color: white; background: rgba(255,255,255,.09); }
+.topbar .stat-pill { color: #d8e2d3; background: rgba(255,255,255,.09); }
+.topbar .stat-pill b { color: white; }
+.onboarding-shell { color: #eff7e8; background: #07100b; }
+.onboarding .brand { color: white; }
+.onboarding .brand-product > span { color: var(--lime); }
+.onboarding .brand-divider { background: white; }
+.onboarding .text-button { color: var(--lime); }
+.onboarding h1 { color: white; }
+.onboarding h1 em, .badge-screen h1 em, .boss-complete h1 em, .team-hero h1 em, .admin-head h1 em { color: var(--lime); }
+.onboarding-copy > p { color: #abb9a7; }
+.stepper span { background: #263127; }
+.stepper .current { background: var(--lime); }
+.stepper .done { background: #92b71d; }
+.onboarding-pill { color: #182107; background: var(--lime); }
+.onboarding-footer { color: #7f8e7a; }
+.today-card { background: linear-gradient(125deg, #08110a, #172617); box-shadow: 0 18px 38px rgba(0,0,0,.22); }
+.today-card .eyebrow { color: #b8c4b3; }
+.today-card .progress-fill { background: var(--lime); }
+.mission-tile-icon { color: #11170d; background: var(--lime); box-shadow: 0 7px 0 #718c13; }
+.continue-button { color: #11170d; background: var(--lime); box-shadow: 0 5px 0 #718c13; }
+.trail-label.blue { color: #4f6511; background: #e9f9b9; }
+
+@media (max-width: 820px) { .app-canvas { background: var(--brw-black); } }

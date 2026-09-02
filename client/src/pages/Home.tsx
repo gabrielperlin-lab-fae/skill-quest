@@ -132,9 +132,10 @@ function ProgressBar({ value, className = "" }: { value: number; className?: str
 
 function Brand({ compact = false }: { compact?: boolean }) {
   return (
-    <button className={`brand ${compact ? "brand-compact" : ""}`} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Skill Quest">
-      <span className="brand-mark"><Sparkles size={compact ? 15 : 18} strokeWidth={2.7} /></span>
-      <span>skill<span>quest</span></span>
+    <button className={`brand ${compact ? "brand-compact" : ""}`} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="BRW Sports Group — Skill Quest">
+      <img className="brand-logo-img" src="/manus-storage/brw-logo_2bbe64a6.png" alt="BRW Sports Group" />
+      <span className="brand-divider" />
+      <span className="brand-product">skill<span>quest</span></span>
     </button>
   );
 }
