@@ -1,0 +1,32 @@
+Validação visual inicial — 2026-09-02
+
+- Onboarding desktop (1280x720): identidade própria, layout assimétrico equilibrado, mascote Nova bem integrado, CTA visível, tipografia e contraste legíveis.
+- Onboarding mobile (390x844): ordem da composição funciona; mascote permanece protagonista sem impedir a leitura; CTA fica visível no primeiro viewport.
+- Navegação inicial: browser view encontrou os controles Pular e Continuar e o título correto em pt-BR.
+- Próximo teste: avançar pelo onboarding, conferir home, mapa, lição, feedback, badge, chefão, modal de aplicação e painel administrativo.
+
+O onboarding avançou corretamente pelas três etapas via Continuar: a barra de progresso marcou 1/3, 2/3 e 3/3; o conteúdo de personalização para Logística/IA apareceu; e o CTA final mudou para “Começar jornada”. A tela final segue legível e mantém a Nova como elemento de orientação sem competir com o CTA.
+
+Após entrar na jornada, a Home apresentou no primeiro viewport o nível, sequência, XP, moedas, meta de 50 XP, próxima missão, recompensa e caminhos para missão diária, desafio coletivo, aplicação prática e mapa. O CTA “Continuar” abriu a missão “Mensagem que funciona”; a pergunta e as quatro alternativas aparecem claramente com botão Conferir desabilitado até uma seleção.
+
+A seleção da alternativa “Canal do time” mudou o estado visual do card (borda azul e radio ativo); Conferir ficou habilitado. O clique levou à tela de feedback com celebração, copy contextual, +30 XP, +8 moedas e CTA “Próxima lição”. O topo refletiu XP 65 e moedas 132, confirmando o estado local.
+
+A tela de conquista apareceu após a resposta correta, com badge Comunicador, XP e CTA para o Chefão. O clique abriu o desafio com 3 etapas, cenário empresarial, fluxograma visual, alternativas de decisão e recompensa de 100 XP; o botão Avançar inicia desabilitado até uma escolha.
+
+No Chefão, a escolha da primeira alternativa ativou Avançar e levou à etapa 2 de 3; a barra de progresso avançou e o conteúdo mudou para “O que você acompanharia primeiro?”. O fluxo sequencial mantém o mesmo padrão de interação, com uma decisão por tela.
+
+O Chefão avançou para a etapa 3 de 3 com o CTA atualizado para “Concluir chefão” e a barra quase completa. A solução final propõe canal único, template de atualização e confirmação entre áreas, conectando diretamente os gaps de colaboração e retrabalho ao desafio prático.
+
+A seleção da solução final habilitou “Concluir chefão”. Ao concluir, o estado mudou para “Chefão superado”, com a mensagem “Processo mais claro. Time mais leve.” e o topo atualizou para 165 XP e 157 moedas, comprovando a recompensa máxima de +100 XP e +25 moedas.
+
+O Perfil consolidou o fluxo: nível 3, XP total, sequência, badges, progresso de maturidade e aplicações reais. O botão “Apliquei no trabalho” abriu um modal sobreposto com os três campos solicitados — o que aplicou, onde e resultado percebido — e recompensa explícita de +80 XP. O modal tem fechar, foco visual e CTA de registro.
+
+O formulário aceitou os três campos preenchidos e, ao enviar, exibiu confirmação com “+80 XP” e “+20 moedas”. O Perfil foi atualizado para 245 XP, 177 moedas, 6 badges e 2 aplicações reais; “Mão na Massa” foi desbloqueado. Isso confirma que a recompensa prática não é apenas decorativa.
+
+Após a correção, o hot reload reiniciou a demo no onboarding; Pular levou novamente à Home e Perfil sem erros. O Perfil continuou exibindo a estrutura esperada e o botão administrativo ficou disponível. Próximo passo é validar Loja, Missões, equipe e painel administrativo, depois rodar check/build final.
+
+A Loja exibiu saldo de 124 moedas, quatro recompensas virtuais e o aviso de que não há dinheiro real. O resgate de “Congelar sequência” mudou o botão para “Resgatado”, confirmando interação local sem cobrança.
+
+A Home abriu o desafio coletivo para a tela de equipe com meta de 78%, 240 XP restantes, CTA de missões e ranking por contribuição. A copy explicita que é parceria, não competição entre departamentos; a tela também mostra o badge coletivo a ser desbloqueado.
+
+O painel de liderança abriu pelo ícone de configurações do Perfil e exibiu adesão, usuários ativos, lições concluídas, aplicações reais, maturidade inicial versus nova avaliação, conclusão por trilha e foco por área. A tela conecta o indicador mais importante — evolução da maturidade digital — aos gaps de Estoque, Expedição e Logística.
