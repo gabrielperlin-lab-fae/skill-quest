@@ -146,7 +146,7 @@ function Brand({ compact = false }: { compact?: boolean }) {
       <span className="brand-divider" />
       <span className="brand-product">skill<span>quest</span></span>
       <span className="brand-divider brand-fae-divider" />
-      <img className="brand-fae-logo" src="/fae-business-logo.png" alt="FAE Business School" />
+      <img className="brand-fae-logo" src={publicAsset("fae-business-logo.png")} alt="FAE Business School" />
     </button>
   );
 }
