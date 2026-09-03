@@ -45,9 +45,6 @@ jobs:
         run: |
           mkdir -p dist/public/manus-storage
           curl --fail --location --retry 3 \
-            https://skillquest-2nwppwqx.manus.space/manus-storage/brw-logo_2bbe64a6.png \
-            --output dist/public/manus-storage/brw-logo_2bbe64a6.png
-          curl --fail --location --retry 3 \
             https://skillquest-2nwppwqx.manus.space/manus-storage/nova-mascot_445a572d.png \
             --output dist/public/manus-storage/nova-mascot_445a572d.png
 

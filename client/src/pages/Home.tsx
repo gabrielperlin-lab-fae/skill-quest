@@ -70,15 +70,15 @@ const navItems: NavItem[] = [
 const trails = [
   {
     name: "Conexão em Equipe",
-    subtitle: "Fale melhor. Retrabalhe menos.",
+    subtitle: "Jogue junto. Retrabalhe menos.",
     icon: "🤝",
     color: "blue",
     progress: "2 / 6",
     status: "Em andamento",
   },
   {
-    name: "IA na Prática",
-    subtitle: "Use IA com critério e segurança.",
+    name: "Tecnologia na Prática",
+    subtitle: "Use tecnologia para ganhar performance.",
     icon: "✦",
     color: "purple",
     progress: "0 / 6",
@@ -86,7 +86,7 @@ const trails = [
   },
   {
     name: "Decisão por Dados",
-    subtitle: "Transforme registros em ação.",
+    subtitle: "Transforme dados em movimento.",
     icon: "◔",
     color: "yellow",
     progress: "0 / 6",
@@ -94,7 +94,7 @@ const trails = [
   },
   {
     name: "Aprender a Aprender",
-    subtitle: "Evolua no seu ritmo.",
+    subtitle: "Evolua no ritmo da sua performance.",
     icon: "◒",
     color: "orange",
     progress: "0 / 5",
@@ -102,7 +102,7 @@ const trails = [
   },
   {
     name: "Turbo Produtividade",
-    subtitle: "Automatize o que pesa.",
+    subtitle: "Acelere o que pesa.",
     icon: "ϟ",
     color: "coral",
     progress: "0 / 6",
@@ -142,7 +142,7 @@ function ProgressBar({ value, className = "" }: { value: number; className?: str
 function Brand({ compact = false }: { compact?: boolean }) {
   return (
     <button className={`brand ${compact ? "brand-compact" : ""}`} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="BRW Sports Group — Skill Quest">
-      <img className="brand-logo-img" src={publicAsset("manus-storage/brw-logo_2bbe64a6.png")} alt="BRW Sports Group" />
+      <img className="brand-logo-img" src={publicAsset("brw-sports-group-official-logo.webp")} alt="BRW Sports Group" />
       <span className="brand-divider" />
       <span className="brand-product">skill<span>quest</span></span>
       <span className="brand-divider brand-fae-divider" />
@@ -331,12 +331,12 @@ function Onboarding({ step, setStep, onFinish }: { step: number; setStep: (step:
   const steps = [
     {
       eyebrow: "BEM-VINDA À SKILL QUEST",
-      title: <>Evolua suas skills,<br /><em>uma missão por vez.</em></>,
-      copy: "Complete desafios rápidos e aprenda habilidades úteis para o trabalho.",
-      pill: "A sua evolução começa aqui",
+      title: <>Eleve sua performance,<br /><em>uma missão por vez.</em></>,
+      copy: "Complete desafios rápidos, ganhe ritmo e leve novas habilidades para a sua performance no trabalho.",
+      pill: "Seu próximo resultado começa aqui",
     },
     {
-      eyebrow: "APRENDA E EVOLUA",
+      eyebrow: "TREINE E EVOLUA",
       title: <>XP, pontos e sequência:<br /><em>cada um tem um papel.</em></>,
       copy: "XP faz você subir de nível. Pontos viram recompensas. A sequência mostra sua consistência.",
       pill: "⭐ XP  ·  🪙 Pontos  ·  🔥 Sequência",
@@ -344,8 +344,8 @@ function Onboarding({ step, setStep, onFinish }: { step: number; setStep: (step:
     {
       eyebrow: "PRONTO PARA COMEÇAR?",
       title: <>Sua primeira missão<br /><em>começa agora.</em></>,
-      copy: "Cada missão leva poucos minutos. Você responde, recebe feedback e avança pela jornada.",
-      pill: "Aprender no trabalho, do seu jeito.",
+      copy: "Cada missão leva poucos minutos. Você entra em campo, recebe feedback e avança pela sua jornada de performance.",
+      pill: "Performance que sai do treino e vira resultado.",
     },
   ];
   const item = steps[step];
@@ -380,7 +380,7 @@ function Onboarding({ step, setStep, onFinish }: { step: number; setStep: (step:
           <div className="mascot-speech">Oi, eu sou a Nova.<br />Bora evoluir?</div>
         </div>
       </div>
-      <div className="onboarding-footer">Aprender no trabalho, do seu jeito.</div>
+      <div className="onboarding-footer">Performance que sai do treino e vira resultado.</div>
     </div>
   );
 }
@@ -415,19 +415,19 @@ function HomeScreen({
 
       <section className="today-card">
         <div className="today-card-top">
-          <div><span className="eyebrow">META DE HOJE</span><h2><b>{xp}</b> <span>/ 50 XP</span></h2></div>
+          <div><span className="eyebrow">TREINO DE HOJE</span><h2><b>{xp}</b> <span>/ 50 XP</span></h2></div>
           <div className="goal-orbit"><span>70%</span></div>
         </div>
         <ProgressBar value={70} />
-        <p><Sparkles size={16} /> Falta pouco para fechar sua meta. A próxima missão resolve isso.</p>
+        <p><Sparkles size={16} /> Você está no ritmo. O próximo desafio leva sua performance mais longe.</p>
       </section>
 
       <section className="continue-section">
-        <div className="section-heading"><div><span className="eyebrow">PRÓXIMA MISSÃO</span><h2>Hora de avançar.</h2></div><button onClick={() => go("map")} className="link-button">Ver jornada <ArrowUpRight size={16} /></button></div>
+        <div className="section-heading"><div><span className="eyebrow">PRÓXIMO DESAFIO</span><h2>Acelere o ritmo.</h2></div><button onClick={() => go("map")} className="link-button">Ver jornada <ArrowUpRight size={16} /></button></div>
         <div className="mission-hero">
           <div className="mission-tile-icon"><MessageSquare size={28} /></div>
           <div className="mission-main"><span className="trail-label blue">CONEXÃO EM EQUIPE</span><h3>Como escrever mensagens claras</h3><p>Aprenda a informar contexto, responsável e prazo.</p><div className="mission-rewards"><span><Activity size={15} /> 5 min</span><span className="reward-xp"><Zap size={15} fill="currentColor" /> +30 XP</span><span className="reward-coin"><Coins size={15} fill="currentColor" /> +5 pontos</span></div></div>
-          <button className="continue-button" onClick={() => go("lesson")}><Play size={22} fill="currentColor" /><span>Começar missão</span></button>
+          <button className="continue-button" onClick={() => go("lesson")}><Play size={22} fill="currentColor" /><span>Entrar em campo</span></button>
           <div className="mission-pattern">✦</div>
         </div>
       </section>
@@ -435,24 +435,24 @@ function HomeScreen({
       <section className="home-grid">
         <button className="daily-mission-card" onClick={() => go("missions")}>
           <div className="card-icon lime"><Target size={21} /></div>
-          <div><span className="eyebrow">MISSÃO DIÁRIA</span><h3>Ganhe 50 XP hoje</h3><p>2 de 3 passos concluídos</p></div>
+          <div><span className="eyebrow">TREINO DIÁRIO</span><h3>Ganhe 50 XP hoje</h3><p>2 de 3 passos concluídos</p></div>
           <ChevronRight size={20} />
         </button>
         <button className="team-card" onClick={() => go("team")}>
           <div className="team-people"><span>J</span><span>A</span><span>R</span></div>
-          <div><span className="eyebrow">DESAFIO COLETIVO</span><h3>Logística está em 78%</h3><p>Faltam 240 XP para a equipe.</p></div>
+          <div><span className="eyebrow">DESAFIO DO TIME</span><h3>Logística está em 78%</h3><p>Faltam 240 XP para a equipe.</p></div>
           <ChevronRight size={20} />
         </button>
       </section>
 
       <section className="apply-strip">
         <div className="apply-icon"><BriefcaseBusiness size={20} /></div>
-        <div><b>Aplicou algo no trabalho?</b><span>Usou uma skill em uma situação real? Registre e ganhe pontos extras.</span></div>
+        <div><b>Levou a skill para o jogo?</b><span>Coloque sua evolução em prática e registre o resultado para ganhar pontos extras.</span></div>
         <button onClick={openApplication}><Plus size={18} /> Registrar</button>
       </section>
 
       <section className="trail-preview">
-        <div className="section-heading"><div><span className="eyebrow">SEU PRÓXIMO MUNDO</span><h2>IA na prática</h2></div><button onClick={() => go("map")} className="link-button">Explorar <ArrowUpRight size={16} /></button></div>
+        <div className="section-heading"><div><span className="eyebrow">PRÓXIMO CIRCUITO</span><h2>Tecnologia na prática</h2></div><button onClick={() => go("map")} className="link-button">Explorar <ArrowUpRight size={16} /></button></div>
         <button className="world-mini purple" onClick={() => go("map")}><div className="world-mini-icon"><Bot size={25} /></div><div><b>Como criar um bom prompt</b><span>Recomendado para Logística</span></div><ChevronRight size={20} /></button>
       </section>
     </div>
@@ -594,7 +594,7 @@ function TeamScreen({ go }: { go: (screen: Screen) => void }) {
   ];
   return (
     <div className="team-screen page-width">
-      <section className="team-hero"><div className="team-orbits"><span>✦</span><span>✦</span><span>✦</span></div><div><span className="eyebrow">DESAFIO COLETIVO • LOGÍSTICA</span><h1>Todo mundo avança<br /><em>quando o time avança.</em></h1><p>O ranking aqui é de parceria: cada XP aproxima a equipe da meta semanal.</p></div><div className="team-goal"><div><b>78%</b><span>concluído</span></div><ProgressBar value={78} /><p>Faltam <b>240 XP</b> para completar o desafio.</p></div></section>
+      <section className="team-hero"><div className="team-orbits"><span>✦</span><span>✦</span><span>✦</span></div><div><span className="eyebrow">DESAFIO DO TIME • LOGÍSTICA</span><h1>Todo mundo avança<br /><em>quando o time avança.</em></h1><p>O ranking aqui é de parceria: cada XP aproxima a equipe da meta semanal.</p></div><div className="team-goal"><div><b>78%</b><span>concluído</span></div><ProgressBar value={78} /><p>Faltam <b>240 XP</b> para completar o desafio.</p></div></section>
       <section className="team-challenge"><div className="challenge-icon"><UsersRound size={28} /></div><div><span className="eyebrow">DESAFIO DA SEMANA</span><h2>Compartilhe uma melhoria que poupa tempo.</h2><p>Quando 6 pessoas participarem, o time desbloqueia o badge <b>Conexão que Resolve</b>.</p></div><button className="secondary-button" onClick={() => go("missions")}>Ver missões</button></section>
       <section className="team-list"><div className="section-heading"><div><span className="eyebrow">CELEBRE QUEM AVANÇOU</span><h2>Movimento do time</h2></div><span className="team-list-label">esta semana</span></div>{members.map(([initial, name, score, note], index) => <article className={`member-row ${name === "Marina" ? "you" : ""}`} key={name}><span className="member-place">{index + 1}</span><span className={`member-avatar avatar-${initial.toLowerCase()}`}>{initial}</span><span className="member-copy"><b>{name}</b><small>{note}</small></span><span className="member-score"><Zap size={14} fill="currentColor" /> {score}</span></article>)}</section>
       <p className="team-note"><HeartHandshake size={17} /> Comparação saudável: esta tela mostra contribuição e apoio, não competição entre departamentos.</p>
