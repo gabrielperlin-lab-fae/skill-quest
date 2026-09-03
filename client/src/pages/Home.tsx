@@ -161,12 +161,14 @@ function TopBar({
   xp,
   coins,
   streak,
+  home,
 }: {
   screen: Screen;
   setScreen: (screen: Screen) => void;
   xp: number;
   coins: number;
   streak: number;
+  home: () => void;
 }) {
   const hasBack = !["home", "onboarding"].includes(screen);
   return (
@@ -174,7 +176,7 @@ function TopBar({
       <div className="topbar-inner">
         <div className="topbar-left">
           {hasBack ? (
-            <button className="icon-button home-button" onClick={() => setScreen("home")} aria-label="Ir para o início" title="Ir para o início"><HomeIcon size={19} /></button>
+            <button className="icon-button home-button" onClick={home} aria-label="Voltar para a página inicial" title="Voltar para a página inicial"><HomeIcon size={19} /></button>
           ) : null}
           <Brand compact />
         </div>
@@ -226,6 +228,11 @@ export default function Home() {
 
   const go = (next: Screen) => {
     setScreen(next);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const returnToStart = () => {
+    setOnboardingStep(0);
+    setScreen("onboarding");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -294,7 +301,7 @@ export default function Home() {
           <Onboarding step={onboardingStep} setStep={setOnboardingStep} onFinish={() => { window.localStorage.setItem("skillquest-onboarding-seen", "1"); go("home"); }} />
         ) : (
           <>
-            <TopBar screen={screen} setScreen={go} xp={xp} coins={coins} streak={streak} />
+            <TopBar screen={screen} setScreen={go} xp={xp} coins={coins} streak={streak} home={returnToStart} />
             <AnimatePresence mode="wait">
               <motion.div
                 key={screen}
