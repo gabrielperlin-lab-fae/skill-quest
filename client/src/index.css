@@ -140,6 +140,8 @@ h1, h2, h3, .brand { font-family: "Outfit", "DM Sans", sans-serif; letter-spacin
 .topbar .brand { color: white; }
 .topbar .brand-product > span { color: var(--lime); }
 .topbar .icon-button { color: white; background: rgba(255,255,255,.09); }
+.topbar .home-button { color: var(--lime); border: 1px solid rgba(197,241,43,.28); }
+.topbar .home-button:hover { color: #11170d; background: var(--lime); }
 .topbar .stat-pill { color: #d8e2d3; background: rgba(255,255,255,.09); }
 .topbar .stat-pill b { color: white; }
 .onboarding-shell { color: #eff7e8; background: #07100b; }

@@ -174,7 +174,7 @@ function TopBar({
       <div className="topbar-inner">
         <div className="topbar-left">
           {hasBack ? (
-            <button className="icon-button back-button" onClick={() => setScreen("home")} aria-label="Voltar ao início"><ChevronLeft size={20} /></button>
+            <button className="icon-button home-button" onClick={() => setScreen("home")} aria-label="Ir para o início" title="Ir para o início"><HomeIcon size={19} /></button>
           ) : null}
           <Brand compact />
         </div>
