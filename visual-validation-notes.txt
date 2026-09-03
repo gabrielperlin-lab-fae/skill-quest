@@ -32,3 +32,27 @@ A Home abriu o desafio coletivo para a tela de equipe com meta de 78%, 240 XP re
 O painel de liderança abriu pelo ícone de configurações do Perfil e exibiu adesão, usuários ativos, lições concluídas, aplicações reais, maturidade inicial versus nova avaliação, conclusão por trilha e foco por área. A tela conecta o indicador mais importante — evolução da maturidade digital — aos gaps de Estoque, Expedição e Logística.
 
 Adaptação BRW validada visualmente: a logo oficial “BRW Sports Group” aparece no cabeçalho junto do produto Skill Quest; o onboarding ganhou fundo grafite/preto, tipografia branca, acentos verde-lima e CTAs de alta energia; a Home ganhou topbar escura, card de meta escuro e progresso lime. O resultado mantém legibilidade e a identidade de plataforma de esporte + tecnologia.
+
+Briefing 2 — validação parcial: onboarding agora apresenta “Evolua suas skills, uma missão por vez.” e a Home mostra a missão “Como escrever mensagens claras”, com aprendizado explícito, 5 min, +30 XP e +5 pontos. O texto “Como criar um bom prompt” também aparece como próximo mundo. Logo e identidade BRW permanecem visíveis no cabeçalho.
+
+Briefing 2 — a primeira missão agora possui contexto objetivo, pergunta clara, alternativas plausíveis e botão “Ver dica”. A dica aparece sem revelar diretamente a resposta, confirmada visualmente no preview. A alternativa incorreta “Chat rápido” foi selecionada para seguir ao feedback.
+
+O primeiro erro foi validado no fluxo real: a tela mostra “Quase!”, uma dica útil e o CTA “Tentar novamente”, sem descontar XP. Ao clicar, a pergunta reabre limpa e pronta para nova escolha.
+
+O acerto foi validado: a tela mostra “Mandou bem!”, explica por que o Canal do time é melhor e entrega separadamente +30 XP e +5 pontos. O topo atualizou para 65 XP e 129 pontos, confirmando que os saldos têm comportamentos distintos.
+
+A Loja agora mostra saldo explícito em pontos, produtos ativos, produto esgotado, produto com saldo insuficiente e estado vazio de “Meus resgates”. O clique em “80 pontos · Resgatar” abriu a confirmação com custo, saldo atual e saldo após resgate (129 → 49 pontos), além de Cancelar e Confirmar resgate.
+
+O resgate foi concluído no preview: saldo caiu de 129 para 49 pontos, estoque de Congelar sequência caiu de 8 para 7, o item mudou para Resgatado e apareceu em Meus resgates com status Entregue ✓. O CTA pós-resgate retornou corretamente à loja.
+
+O Perfil foi validado com XP e Pontos para resgate em blocos separados. “Como funciona?” abre uma explicação curta de Missões → XP → nível, Missões → pontos → recompensas, Aplicações reais → bônus e Sequência → consistência, com CTA para rever o onboarding.
+
+A reinicialização do preview retorna ao onboarding e, ao entrar, a Home preserva a missão objetiva e os saldos iniciais. Isso confirma o comportamento esperado de primeira visita no protótipo estático.
+
+Foi iniciado um segundo ciclo de teste de erro após reinicializar a aplicação: a missão abriu com contexto e alternativas, e uma resposta incorreta foi selecionada novamente para validar a segunda tentativa.
+
+Após o primeiro erro, “Tentar novamente” reabriu a mesma missão sem revelar a resposta e sem alterar os saldos, permitindo uma segunda tentativa.
+
+O segundo erro foi validado: o feedback muda para “Vamos entender.”, explica por que a alternativa B é melhor e oferece “Continuar”, sem revelar a resposta antes da segunda tentativa e sem punir XP.
+
+Teste de persistência: após o clique em Pular, a aplicação entrou na Home e gravou a conclusão do onboarding no armazenamento local. A confirmação após recarga dependerá do ambiente de preview, que pode recriar o contexto do navegador a cada navegação.

@@ -117,6 +117,13 @@ const lessonOptions = [
   { id: "call", icon: "☎️", label: "Ligação", detail: "Urgência que precisa de conversa" },
 ];
 
+const rewards = [
+  { id: "freeze", name: "Congelar sequência", cost: 80, icon: "❄", color: "blue", desc: "Um respiro sem perder o ritmo.", stock: 8 },
+  { id: "double", name: "Dobro de XP", cost: 120, icon: "⚡", color: "yellow", desc: "Ative em uma missão especial.", stock: 4 },
+  { id: "aurora", name: "Tema Aurora", cost: 180, icon: "✦", color: "purple", desc: "Um visual novo para sua jornada.", stock: 2 },
+  { id: "visor", name: "Visor Coral", cost: 220, icon: "◖", color: "coral", desc: "Um item raro para a Nova.", stock: 0 },
+];
+
 function ProgressBar({ value, className = "" }: { value: number; className?: string }) {
   return (
     <div className={`progress-track ${className}`} aria-label={`${value}% concluído`}>
@@ -195,10 +202,11 @@ function BottomNav({ screen, setScreen }: { screen: Screen; setScreen: (screen: 
 }
 
 export default function Home() {
-  const [screen, setScreen] = useState<Screen>("onboarding");
+  const [screen, setScreen] = useState<Screen>(() => typeof window !== "undefined" && window.localStorage.getItem("skillquest-onboarding-seen") === "1" ? "home" : "onboarding");
   const [onboardingStep, setOnboardingStep] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [answerCorrect, setAnswerCorrect] = useState(false);
+  const [attempts, setAttempts] = useState(0);
   const [xp, setXp] = useState(35);
   const [coins, setCoins] = useState(124);
   const [streak] = useState(5);
@@ -207,6 +215,10 @@ export default function Home() {
   const [applicationRegistered, setApplicationRegistered] = useState(false);
   const [bossComplete, setBossComplete] = useState(false);
   const [purchased, setPurchased] = useState<string[]>([]);
+  const [redeemed, setRedeemed] = useState<string[]>([]);
+  const [stockById, setStockById] = useState<Record<string, number>>(() => Object.fromEntries(rewards.map((reward) => [reward.id, reward.stock])));
+  const [pendingReward, setPendingReward] = useState<typeof rewards[number] | null>(null);
+  const [redeemSuccess, setRedeemSuccess] = useState(false);
 
   const go = (next: Screen) => {
     setScreen(next);
@@ -220,9 +232,10 @@ export default function Home() {
   const checkAnswer = () => {
     const isCorrect = selectedAnswer === "teams";
     setAnswerCorrect(isCorrect);
+    setAttempts((current) => current + 1);
     if (isCorrect) {
       setXp((current) => current + 30);
-      setCoins((current) => current + 8);
+      setCoins((current) => current + 5);
     }
     go("feedback");
   };
@@ -232,11 +245,23 @@ export default function Home() {
     setApplicationSent(true);
     setApplicationRegistered(true);
     setXp((current) => current + 80);
-    setCoins((current) => current + 20);
+    setCoins((current) => current + 25);
   };
 
-  const purchase = (name: string) => {
-    if (!purchased.includes(name)) setPurchased((items) => [...items, name]);
+  const requestPurchase = (reward: typeof rewards[number]) => {
+    if (!purchased.includes(reward.id) && stockById[reward.id] > 0 && coins >= reward.cost) {
+      setPendingReward(reward);
+      setRedeemSuccess(false);
+    }
+  };
+
+  const confirmPurchase = () => {
+    if (!pendingReward || purchased.includes(pendingReward.id) || stockById[pendingReward.id] <= 0 || coins < pendingReward.cost) return;
+    setCoins((current) => current - pendingReward.cost);
+    setStockById((current) => ({ ...current, [pendingReward.id]: current[pendingReward.id] - 1 }));
+    setPurchased((items) => [...items, pendingReward.id]);
+    setRedeemed((items) => [pendingReward.id, ...items]);
+    setRedeemSuccess(true);
   };
 
   const openApplication = () => {
@@ -250,9 +275,9 @@ export default function Home() {
     lesson: <LessonScreen selectedAnswer={selectedAnswer} chooseAnswer={chooseAnswer} checkAnswer={checkAnswer} go={go} />, 
     boss: <BossScreen complete={bossComplete} onComplete={() => { setBossComplete(true); setXp((current) => current + 100); setCoins((current) => current + 25); }} go={go} />, 
     missions: <MissionsScreen go={go} openApplication={openApplication} applicationRegistered={applicationRegistered} />, 
-    store: <StoreScreen coins={coins} purchased={purchased} purchase={purchase} />, 
+    store: <StoreScreen coins={coins} purchased={purchased} redeemed={redeemed} stockById={stockById} requestPurchase={requestPurchase} />, 
     team: <TeamScreen go={go} />, 
-    profile: <ProfileScreen xp={xp} streak={streak} applicationRegistered={applicationRegistered} go={go} openApplication={openApplication} />, 
+    profile: <ProfileScreen xp={xp} coins={coins} streak={streak} applicationRegistered={applicationRegistered} go={go} openApplication={openApplication} reviewOnboarding={() => { setOnboardingStep(0); go("onboarding"); }} />, 
     admin: <AdminScreen go={go} />, 
   };
 
@@ -262,7 +287,7 @@ export default function Home() {
       <div className="ambient ambient-two" />
       <section className={`app-shell ${screen === "onboarding" ? "onboarding-shell" : ""}`}>
         {screen === "onboarding" ? (
-          <Onboarding step={onboardingStep} setStep={setOnboardingStep} onFinish={() => go("home")} />
+          <Onboarding step={onboardingStep} setStep={setOnboardingStep} onFinish={() => { window.localStorage.setItem("skillquest-onboarding-seen", "1"); go("home"); }} />
         ) : (
           <>
             <TopBar screen={screen} setScreen={go} xp={xp} coins={coins} streak={streak} />
@@ -276,7 +301,7 @@ export default function Home() {
                 className="screen-content"
               >
                 {screen === "feedback" ? (
-                  <FeedbackScreen correct={answerCorrect} onRetry={() => go("lesson")} onNext={() => go("badge")} />
+                  <FeedbackScreen correct={answerCorrect} attempts={attempts} onRetry={() => { setSelectedAnswer(null); go("lesson"); }} onNext={() => go("badge")} />
                 ) : screen === "badge" ? (
                   <BadgeScreen onMap={() => go("map")} onBoss={() => go("boss")} />
                 ) : appScreens[screen as Exclude<Screen, "onboarding" | "feedback" | "badge">]}
@@ -293,6 +318,7 @@ export default function Home() {
         success={applicationSent}
         submit={submitApplication}
       />
+      <RewardModal reward={pendingReward} success={redeemSuccess} coins={coins} close={() => { setPendingReward(null); setRedeemSuccess(false); }} confirm={confirmPurchase} goToStore={() => { setPendingReward(null); setRedeemSuccess(false); go("store"); }} />
     </main>
   );
 }
@@ -301,21 +327,21 @@ function Onboarding({ step, setStep, onFinish }: { step: number; setStep: (step:
   const steps = [
     {
       eyebrow: "BEM-VINDA À SKILL QUEST",
-      title: <>Seu trabalho já é um desafio.<br /><em>Vamos deixar o digital mais leve.</em></>,
-      copy: "Missões curtas, progresso que aparece e habilidades que funcionam fora da tela.",
+      title: <>Evolua suas skills,<br /><em>uma missão por vez.</em></>,
+      copy: "Complete desafios rápidos e aprenda habilidades úteis para o trabalho.",
       pill: "A sua evolução começa aqui",
     },
     {
-      eyebrow: "JORNADA DO SEU JEITO",
-      title: <>A gente destaca o que<br /><em>vai fazer diferença na sua área.</em></>,
-      copy: "Para a Logística, IA aplicada vem primeiro. Você ainda pode explorar todas as trilhas quando quiser.",
-      pill: "Prioridade: IA na Prática ✦",
+      eyebrow: "APRENDA E EVOLUA",
+      title: <>XP, pontos e sequência:<br /><em>cada um tem um papel.</em></>,
+      copy: "XP faz você subir de nível. Pontos viram recompensas. A sequência mostra sua consistência.",
+      pill: "⭐ XP  ·  🪙 Pontos  ·  🔥 Sequência",
     },
     {
-      eyebrow: "5–10 MINUTOS POR DIA",
-      title: <>Uma pequena missão.<br /><em>Um avanço de verdade.</em></>,
-      copy: "Ganhe XP, registre o que aplicou e ajude sua equipe a chegar mais longe. Sem pressão, só progresso.",
-      pill: "Meta de hoje: 50 XP",
+      eyebrow: "PRONTO PARA COMEÇAR?",
+      title: <>Sua primeira missão<br /><em>começa agora.</em></>,
+      copy: "Cada missão leva poucos minutos. Você responde, recebe feedback e avança pela jornada.",
+      pill: "Aprender no trabalho, do seu jeito.",
     },
   ];
   const item = steps[step];
@@ -396,8 +422,8 @@ function HomeScreen({
         <div className="section-heading"><div><span className="eyebrow">PRÓXIMA MISSÃO</span><h2>Hora de avançar.</h2></div><button onClick={() => go("map")} className="link-button">Ver jornada <ArrowUpRight size={16} /></button></div>
         <div className="mission-hero">
           <div className="mission-tile-icon"><MessageSquare size={28} /></div>
-          <div className="mission-main"><span className="trail-label blue">CONEXÃO EM EQUIPE</span><h3>Mensagem que funciona</h3><p>Escolha o canal e reduza o ruído.</p><div className="mission-rewards"><span><Activity size={15} /> 6 min</span><span className="reward-xp"><Zap size={15} fill="currentColor" /> +30 XP</span><span className="reward-coin"><Coins size={15} fill="currentColor" /> +8</span></div></div>
-          <button className="continue-button" onClick={() => go("lesson")}><Play size={22} fill="currentColor" /><span>Continuar</span></button>
+          <div className="mission-main"><span className="trail-label blue">CONEXÃO EM EQUIPE</span><h3>Como escrever mensagens claras</h3><p>Aprenda a informar contexto, responsável e prazo.</p><div className="mission-rewards"><span><Activity size={15} /> 5 min</span><span className="reward-xp"><Zap size={15} fill="currentColor" /> +30 XP</span><span className="reward-coin"><Coins size={15} fill="currentColor" /> +5 pontos</span></div></div>
+          <button className="continue-button" onClick={() => go("lesson")}><Play size={22} fill="currentColor" /><span>Começar missão</span></button>
           <div className="mission-pattern">✦</div>
         </div>
       </section>
@@ -417,13 +443,13 @@ function HomeScreen({
 
       <section className="apply-strip">
         <div className="apply-icon"><BriefcaseBusiness size={20} /></div>
-        <div><b>Aplicou algo no trabalho?</b><span>Conte rapidinho e ganhe XP extra.</span></div>
+        <div><b>Aplicou algo no trabalho?</b><span>Usou uma skill em uma situação real? Registre e ganhe pontos extras.</span></div>
         <button onClick={openApplication}><Plus size={18} /> Registrar</button>
       </section>
 
       <section className="trail-preview">
         <div className="section-heading"><div><span className="eyebrow">SEU PRÓXIMO MUNDO</span><h2>IA na prática</h2></div><button onClick={() => go("map")} className="link-button">Explorar <ArrowUpRight size={16} /></button></div>
-        <button className="world-mini purple" onClick={() => go("map")}><div className="world-mini-icon"><Bot size={25} /></div><div><b>Prompts que ajudam de verdade</b><span>Recomendado para Logística</span></div><ChevronRight size={20} /></button>
+        <button className="world-mini purple" onClick={() => go("map")}><div className="world-mini-icon"><Bot size={25} /></div><div><b>Como criar um bom prompt</b><span>Recomendado para Logística</span></div><ChevronRight size={20} /></button>
       </section>
     </div>
   );
@@ -444,10 +470,10 @@ function MapScreen({ go }: { go: (screen: Screen) => void }) {
           <div className="path-line blue-line" />
           <button className="map-node node-done node-one" onClick={() => go("lesson")} aria-label="Escolha seu canal, concluída"><Check size={22} /></button>
           <button className="map-node node-done node-two" onClick={() => go("lesson")} aria-label="Contexto que resolve, concluída"><Check size={22} /></button>
-          <button className="map-node node-current node-three" onClick={() => go("lesson")} aria-label="Mensagem que funciona, missão atual"><MessageSquare size={23} /><span className="node-tooltip">Você está aqui <ChevronRight size={13} /></span></button>
-          <button className="map-node node-lock node-four" onClick={() => go("lesson")} aria-label="Missão bloqueada"><Lock size={18} /></button>
+          <button className="map-node node-current node-three" onClick={() => go("lesson")} aria-label="Como escrever mensagens claras, missão atual"><MessageSquare size={23} /><span className="node-tooltip">Como escrever mensagens claras <ChevronRight size={13} /></span></button>
+          <button className="map-node node-lock node-four" disabled aria-label="Próxima missão bloqueada"><Lock size={18} /><span className="node-tooltip">Complete esta missão para desbloquear a próxima</span></button>
           <button className="map-node node-boss node-five" onClick={() => go("boss")} aria-label="Chefão: melhore um processo real"><Crown size={24} /><span>CHEFÃO</span></button>
-          <div className="world-banner blue"><div className="world-banner-icon">🤝</div><div><span>MUNDO 1</span><b>Conexão em Equipe</b></div><button onClick={() => go("lesson")}>Continuar <Play size={14} fill="currentColor" /></button></div>
+          <div className="world-banner blue"><div className="world-banner-icon">🤝</div><div><span>MUNDO 1 · MISSÃO ATUAL</span><b>Como escrever mensagens claras</b></div><button onClick={() => go("lesson")}>Começar <Play size={14} fill="currentColor" /></button></div>
         </section>
         <aside className="world-list">
           <span className="eyebrow">TODOS OS MUNDOS</span>
@@ -464,14 +490,17 @@ function MapScreen({ go }: { go: (screen: Screen) => void }) {
 }
 
 function LessonScreen({ selectedAnswer, chooseAnswer, checkAnswer, go }: { selectedAnswer: string | null; chooseAnswer: (id: string) => void; checkAnswer: () => void; go: (screen: Screen) => void }) {
+  const [showHint, setShowHint] = useState(false);
   return (
     <div className="lesson-screen page-width narrow-width">
       <div className="lesson-topline"><button className="icon-button" onClick={() => go("map")} aria-label="Voltar ao mapa"><X size={20} /></button><div className="lesson-progress"><ProgressBar value={42} /><span>2 / 6</span></div><button className="sound-toggle" aria-label="Som ligado">◖))</button></div>
       <section className="lesson-card">
         <div className="lesson-kind"><MessageSquare size={16} /> DECISÃO RÁPIDA <span>•</span> 6 MIN</div>
         <div className="lesson-visual"><div className="visual-ring" /><div className="chat-bubble bubble-one">Pessoal, o pedido 7842 mudou de prioridade.</div><div className="chat-bubble bubble-two">Qual canal garante que ninguém perca essa mudança?</div><div className="visual-avatar avatar-a">R</div><div className="visual-avatar avatar-b">M</div></div>
-        <h1>Qual canal você usaria para comunicar uma mudança que afeta Expedição, Estoque e Comercial?</h1>
-        <p className="lesson-helper">Uma decisão por tela. Pense no alcance e no histórico que o time precisa ter.</p>
+        <h1>Você precisa avisar Expedição, Estoque e Comercial que o pedido 7842 mudou de prioridade. Qual canal comunica melhor?</h1>
+        <p className="lesson-helper">Escolha o canal que deixa contexto, ação esperada e histórico visíveis para as três áreas.</p>
+        <button className="hint-button" onClick={() => setShowHint((value) => !value)}><Sparkles size={15} /> {showHint ? "Dica exibida" : "Ver dica"}</button>
+        {showHint ? <p className="hint-copy">Pense em alcance e rastreabilidade: a melhor opção permite que todos acompanhem e confirmem a mudança.</p> : null}
         <div className="answer-grid">
           {lessonOptions.map((option) => <button key={option.id} onClick={() => chooseAnswer(option.id)} className={`answer-option ${selectedAnswer === option.id ? "selected" : ""}`}><span className="answer-emoji">{option.icon}</span><span><b>{option.label}</b><small>{option.detail}</small></span><span className="answer-radio" /></button>)}
         </div>
@@ -481,17 +510,18 @@ function LessonScreen({ selectedAnswer, chooseAnswer, checkAnswer, go }: { selec
   );
 }
 
-function FeedbackScreen({ correct, onRetry, onNext }: { correct: boolean; onRetry: () => void; onNext: () => void }) {
+function FeedbackScreen({ correct, attempts, onRetry, onNext }: { correct: boolean; attempts: number; onRetry: () => void; onNext: () => void }) {
   return (
     <div className={`feedback-screen ${correct ? "success" : "retry"}`}>
       {correct ? <div className="confetti" aria-hidden="true"><i /><i /><i /><i /><i /><i /><i /><i /></div> : null}
       <div className="feedback-card">
         <div className="feedback-graphic">{correct ? <><div className="success-burst">✦</div><CircleCheck size={64} strokeWidth={2.2} /></> : <><div className="retry-burst">?</div><Undo2 size={58} strokeWidth={2.1} /></>}</div>
-        <span className="eyebrow">{correct ? "RESPOSTA CERTA" : "SEM PRESSA"}</span>
-        <h1>{correct ? "Boa, Marina!" : "Quase!"}</h1>
-        <p>{correct ? "Canal do time é o melhor lugar para uma mudança que precisa de visibilidade, histórico e confirmação entre áreas." : "Para mudanças que afetam várias áreas, prefira um canal em que todos possam ver o contexto e confirmar o combinado."}</p>
-        {correct ? <div className="earned-row"><span><Zap size={17} fill="currentColor" /> +30 XP</span><span><Coins size={17} fill="currentColor" /> +8 moedas</span></div> : null}
-        <button className="primary-button wide" onClick={correct ? onNext : onRetry}>{correct ? "Próxima lição" : "Tentar de novo"} <ChevronRight size={20} /></button>
+        <span className="eyebrow">{correct ? "RESPOSTA CERTA" : attempts === 1 ? "PRIMEIRO ERRO" : "VAMOS ENTENDER"}</span>
+        <h1>{correct ? "Mandou bem!" : attempts === 1 ? "Quase!" : "Vamos entender."}</h1>
+        <p>{correct ? "O canal do time deixa o pedido visível, registra o contexto e permite confirmação entre áreas." : attempts === 1 ? "Uma boa mensagem precisa ser vista pelas pessoas certas e manter um histórico do combinado." : "A alternativa B é melhor porque alcança as áreas envolvidas e mantém a mudança disponível para consulta e confirmação."}</p>
+        {!correct && attempts === 1 ? <div className="hint-feedback"><Sparkles size={18} /><div><b>Dica</b><span>Procure um canal em que todos consigam ver o contexto e confirmar a mudança.</span></div></div> : null}
+        {correct ? <div className="earned-row"><span><Zap size={17} fill="currentColor" /> +30 XP</span><span><Coins size={17} fill="currentColor" /> +5 pontos</span></div> : null}
+        <button className="primary-button wide" onClick={correct ? onNext : attempts === 1 ? onRetry : onNext}>{correct ? "Próxima lição" : attempts === 1 ? "Tentar novamente" : "Continuar"} <ChevronRight size={20} /></button>
       </div>
     </div>
   );
@@ -533,24 +563,19 @@ function MissionsScreen({ go, openApplication, applicationRegistered }: { go: (s
   return (
     <div className="missions-screen page-width">
       <section className="page-title"><div><span className="eyebrow">SESSÕES CURTAS, IMPACTO REAL</span><h1>Missões</h1><p>Vá no seu ritmo. Sua consistência já está fazendo diferença.</p></div><div className="mission-week-score"><span>SEMANA</span><b>4<span>/5</span></b><small>missões</small></div></section>
-      <section className="mission-group"><div className="group-header"><div className="group-icon lime"><Target size={20} /></div><div><h2>Hoje</h2><p>Meta: 50 XP • faltam 15 XP</p></div></div><button className="mission-row completed"><span className="mission-check"><Check size={16} /></span><span><b>Faça 1 lição</b><small>Mensagem que funciona</small></span><span className="row-xp">+30 XP</span></button><button className="mission-row" onClick={() => go("lesson")}><span className="mission-circle" /><span><b>Ganhe 50 XP</b><small>Você está a 15 XP de fechar</small></span><span className="row-xp">+20 XP</span><ChevronRight size={18} /></button><button className="mission-row"><span className="mission-circle" /><span><b>Complete sem erro</b><small>Uma atividade perfeita</small></span><span className="row-xp">+15 XP</span><ChevronRight size={18} /></button></section>
+      <section className="mission-group"><div className="group-header"><div className="group-icon lime"><Target size={20} /></div><div><h2>Hoje</h2><p>Complete 2 missões • faltam 15 XP</p></div></div><button className="mission-row completed"><span className="mission-check"><Check size={16} /></span><span><b>Como escrever mensagens claras</b><small>Aprenda contexto, responsável e prazo</small></span><span className="row-xp">+30 XP · +5 pts</span></button><button className="mission-row" onClick={() => go("lesson")}><span className="mission-circle" /><span><b>Como criar um bom prompt</b><small>Aprenda contexto, tarefa e formato</small></span><span className="row-xp">+30 XP · +8 pts</span><ChevronRight size={18} /></button><button className="mission-row"><span className="mission-circle" /><span><b>Aplicar uma skill no trabalho</b><small>Registre uma melhoria real</small></span><span className="row-xp">+80 XP · +25 pts</span><ChevronRight size={18} /></button></section>
       <section className="mission-group weekly"><div className="group-header"><div className="group-icon purple"><Rocket size={20} /></div><div><h2>Esta semana</h2><p>Pequenos passos viram novas rotinas.</p></div></div><button className={`apply-mission ${applicationRegistered ? "completed" : ""}`} onClick={openApplication}><div className="apply-mission-icon"><BriefcaseBusiness size={24} /></div><div><span className="eyebrow">MISSÃO PRÁTICA</span><h3>{applicationRegistered ? "Aplicação registrada!" : "Aplique no trabalho"}</h3><p>{applicationRegistered ? "A Nova já adicionou seu XP extra." : "Registre uma melhoria que você testou."}</p><span className="reward-chip"><Zap size={14} fill="currentColor" /> +80 XP</span></div>{applicationRegistered ? <CircleCheck size={24} /> : <ChevronRight size={22} />}</button><button className="mission-row" onClick={() => go("team")}><span className="mission-circle" /><span><b>Compartilhe uma boa prática</b><small>Ajude alguém do time a avançar</small></span><span className="row-xp">+30 XP</span><ChevronRight size={18} /></button><button className="mission-row"><span className="mission-circle" /><span><b>Mantenha a sequência</b><small>Faça uma sessão amanhã</small></span><span className="row-xp">+20 XP</span><ChevronRight size={18} /></button></section>
     </div>
   );
 }
 
-function StoreScreen({ coins, purchased, purchase }: { coins: number; purchased: string[]; purchase: (name: string) => void }) {
-  const rewards = [
-    { name: "Congelar sequência", cost: 80, icon: "❄", color: "blue", desc: "Um respiro sem perder o ritmo." },
-    { name: "Dobro de XP", cost: 120, icon: "⚡", color: "yellow", desc: "Ative em uma missão especial." },
-    { name: "Tema Aurora", cost: 180, icon: "✦", color: "purple", desc: "Um visual novo para sua jornada." },
-    { name: "Visor Coral", cost: 220, icon: "◖", color: "coral", desc: "Um item raro para a Nova." },
-  ];
+function StoreScreen({ coins, purchased, redeemed, stockById, requestPurchase }: { coins: number; purchased: string[]; redeemed: string[]; stockById: Record<string, number>; requestPurchase: (reward: typeof rewards[number]) => void }) {
   return (
     <div className="store-screen page-width">
-      <section className="store-hero"><div><span className="eyebrow">RECOMPENSAS VIRTUAIS</span><h1>Loja da jornada</h1><p>Use suas moedas para deixar a experiência ainda mais sua.</p></div><div className="coin-balance"><Coins size={25} fill="currentColor" /><div><span>SEU SALDO</span><b>{coins}</b></div></div></section>
-      <div className="nova-shop-note"><TinyMascot size="small" /><p><b>Dica da Nova:</b> suas moedas são conquistadas em missões e aplicações. Aqui não entra dinheiro real.</p></div>
-      <section className="reward-grid">{rewards.map((reward) => { const isPurchased = purchased.includes(reward.name); return <article className={`reward-card ${reward.color}`} key={reward.name}><div className="reward-card-top"><div className="reward-symbol">{reward.icon}</div><span className="limited-tag">VIRTUAL</span></div><h2>{reward.name}</h2><p>{reward.desc}</p><button disabled={isPurchased || coins < reward.cost} onClick={() => purchase(reward.name)}>{isPurchased ? <><Check size={16} /> Resgatado</> : <><Coins size={16} fill="currentColor" /> {reward.cost}</>}</button></article>; })}</section>
+      <section className="store-hero"><div><span className="eyebrow">🎁 RECOMPENSAS</span><h1>Loja da jornada</h1><p>Use os pontos conquistados nas missões para resgatar recompensas.</p></div><div className="coin-balance"><Coins size={25} fill="currentColor" /><div><span>SEU SALDO EM PONTOS</span><b>{coins}</b></div></div></section>
+      <div className="nova-shop-note"><TinyMascot size="small" /><p><b>Como funciona:</b> XP faz você subir de nível. <b>Pontos</b> são o saldo usado nesta loja — e não entram em dinheiro real.</p></div>
+      <section className="reward-grid">{rewards.map((reward) => { const isPurchased = purchased.includes(reward.id); const affordable = coins >= reward.cost; const stock = stockById[reward.id] ?? 0; const available = stock > 0; return <article className={`reward-card ${reward.color}`} key={reward.id}><div className="reward-card-top"><div className="reward-symbol">{reward.icon}</div><span className="limited-tag">{!available ? "ESGOTADO" : "ATIVO"}</span></div><h2>{reward.name}</h2><p>{reward.desc}</p><small className="reward-stock">{available ? `${stock} disponíveis` : "Estoque encerrado"}</small><button disabled={isPurchased || !available || !affordable} onClick={() => requestPurchase(reward)}>{isPurchased ? <><Check size={16} /> Resgatado</> : !available ? "Esgotado" : !affordable ? <>Faltam {reward.cost - coins} pontos</> : <><Coins size={16} fill="currentColor" /> {reward.cost} pontos · Resgatar</>}</button></article>; })}</section>
+      <section className="redemption-history"><div className="section-heading"><div><span className="eyebrow">MEUS RESGATES</span><h2>O que você já trocou</h2></div></div>{redeemed.length === 0 ? <div className="empty-state"><Gift size={25} /><b>Você ainda não resgatou nenhuma recompensa.</b><span>Complete missões para ganhar pontos.</span></div> : <div className="redemption-list">{redeemed.map((id, index) => { const reward = rewards.find((item) => item.id === id); return reward ? <div className="redemption-row" key={`${id}-${index}`}><span>{reward.icon}</span><div><b>{reward.name}</b><small>{reward.cost} pontos · 02/09/2026</small></div><strong>Entregue ✓</strong></div> : null; })}</div>}</section>
       <div className="store-footnote"><Gift size={18} /><span>Mais itens aparecem conforme você evolui. Sem punição, sem pressão.</span></div>
     </div>
   );
@@ -573,15 +598,17 @@ function TeamScreen({ go }: { go: (screen: Screen) => void }) {
   );
 }
 
-function ProfileScreen({ xp, streak, applicationRegistered, go, openApplication }: { xp: number; streak: number; applicationRegistered: boolean; go: (screen: Screen) => void; openApplication: () => void }) {
+function ProfileScreen({ xp, coins, streak, applicationRegistered, go, openApplication, reviewOnboarding }: { xp: number; coins: number; streak: number; applicationRegistered: boolean; go: (screen: Screen) => void; openApplication: () => void; reviewOnboarding: () => void }) {
+  const [helpOpen, setHelpOpen] = useState(false);
   const badges = [
     ["🌱", "Primeiro Passo", true], ["🔥", "Em Chamas", true], ["💬", "Comunicador", true], ["🤝", "Conector", true], ["🛠", "Mão na Massa", applicationRegistered], ["🤖", "Mestre da IA", false],
   ];
   return (
     <div className="profile-screen page-width">
       <section className="profile-hero"><div className="profile-person"><div className="avatar avatar-marina large">M</div><div><span className="eyebrow">NÍVEL 3</span><h1>Marina Alves</h1><p>Aplicadora Digital</p></div></div><button className="profile-settings" onClick={() => go("admin")} aria-label="Ver painel administrativo"><Settings2 size={19} /></button><div className="profile-level-progress"><div><span>Rumo ao nível 4</span><b>{xp} / 800 XP</b></div><ProgressBar value={Math.min(100, xp / 8)} /><small>Para virar Especialista, aplique 2 skills no trabalho.</small></div></section>
-      <section className="profile-stats"><div><Zap size={20} fill="currentColor" /><b>{xp}</b><span>XP total</span></div><div><Flame size={20} fill="currentColor" /><b>{streak}</b><span>dias de sequência</span></div><div><Medal size={20} fill="currentColor" /><b>{applicationRegistered ? 6 : 5}</b><span>badges</span></div><div><BriefcaseBusiness size={20} /><b>{applicationRegistered ? 2 : 1}</b><span>aplicações reais</span></div></section>
+      <section className="profile-stats"><div><Zap size={20} fill="currentColor" /><b>{xp}</b><span>XP · sobe de nível</span></div><div><Coins size={20} fill="currentColor" /><b>{coins}</b><span>Pontos para resgate</span></div><div><Flame size={20} fill="currentColor" /><b>{streak}</b><span>dias de sequência</span></div><div><Medal size={20} fill="currentColor" /><b>{applicationRegistered ? 6 : 5}</b><span>badges</span></div></section>
       <section className="profile-section"><div className="section-heading"><div><span className="eyebrow">SUA EVOLUÇÃO</span><h2>Jornada em movimento</h2></div><span className="completion-tag">18% concluída</span></div><div className="evolution-card"><div className="evolution-line"><span className="initial">3,85</span><i /><span className="future">4,00</span></div><div><span>Maturidade digital</span><b>Seu avanço está ligado a ações práticas.</b><p>Conexão em Equipe: 2 de 6 missões • IA na Prática está esperando você.</p></div><button onClick={() => go("map")}><MapIcon size={18} /> Jornada</button></div></section>
+      <section className="profile-section help-section"><button className="help-toggle" onClick={() => setHelpOpen((value) => !value)}><span className="help-icon">?</span><span><b>Como funciona?</b><small>Veja como XP, pontos e sequência se conectam.</small></span><ChevronRight size={19} className={helpOpen ? "rotated" : ""} /></button>{helpOpen ? <div className="help-copy"><p><b>Missões → XP → nível.</b> Use XP para acompanhar sua evolução.</p><p><b>Missões → pontos → recompensas.</b> Troque pontos na Loja.</p><p><b>Aplicações reais → bônus.</b> Registre o que testou no trabalho.</p><p><b>Sequência → consistência.</b> Mostra quantos dias você manteve o ritmo.</p><button className="link-button" onClick={reviewOnboarding}>Rever explicação inicial <ArrowUpRight size={15} /></button></div> : null}</section>
       <section className="profile-section"><div className="section-heading"><div><span className="eyebrow">CONQUISTAS</span><h2>Seu mural</h2></div><button className="link-button">Ver todas <ArrowUpRight size={16} /></button></div><div className="badge-grid">{badges.map(([icon, name, unlocked]) => <div key={String(name)} className={`profile-badge ${unlocked ? "unlocked" : "locked"}`}><span>{icon}</span><b>{name}</b>{!unlocked ? <small><Lock size={11} /> em breve</small> : null}</div>)}</div></section>
       <section className="profile-section"><div className="apply-profile"><div className="apply-icon"><BriefcaseBusiness size={21} /></div><div><span className="eyebrow">IMPACTO NO TRABALHO</span><h2>{applicationRegistered ? "Sua aplicação foi registrada" : "Transforme prática em XP"}</h2><p>{applicationRegistered ? "Você registrou uma melhoria. Boa! Esse tipo de passo muda a rotina." : "Conte uma mudança que você testou e registre o resultado percebido."}</p></div><button className="primary-button" onClick={openApplication}>{applicationRegistered ? "Registrar outra" : "Apliquei no trabalho"} <Plus size={17} /></button></div></section>
     </div>
@@ -603,6 +630,10 @@ function AdminScreen({ go }: { go: (screen: Screen) => void }) {
   );
 }
 
+function RewardModal({ reward, success, coins, close, confirm, goToStore }: { reward: typeof rewards[number] | null; success: boolean; coins: number; close: () => void; confirm: () => void; goToStore: () => void }) {
+  return <AnimatePresence>{reward ? <motion.div className="modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><motion.div className="application-modal reward-confirm-modal" initial={{ opacity: 0, y: 18, scale: .97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: .97 }}><button className="modal-close" onClick={close} aria-label="Fechar"><X size={20} /></button>{success ? <div className="application-success"><div className="apply-success-icon"><Gift size={42} /></div><span className="eyebrow">RESGATE REALIZADO!</span><h2>{reward.name} foi adicionado aos seus resgates.</h2><p>Seu novo saldo é <b>{coins} pontos</b>. O status do protótipo é <b>Entregue ✓</b>.</p><button className="primary-button wide" onClick={goToStore}>Ver meus resgates <ArrowUpRight size={18} /></button></div> : <div className="application-success"><div className="apply-success-icon"><Gift size={42} /></div><span className="eyebrow">CONFIRMAR RESGATE</span><h2>Resgatar recompensa?</h2><p><b>{reward.name}</b><br />Custo: <b>{reward.cost} pontos</b><br />Seu saldo: <b>{coins} pontos</b><br />Saldo após resgate: <b>{coins - reward.cost} pontos</b></p><div className="modal-choice-row"><button className="secondary-button" onClick={close}>Cancelar</button><button className="primary-button" onClick={confirm}>Confirmar resgate</button></div></div>}</motion.div></motion.div> : null}</AnimatePresence>;
+}
+
 function ApplicationModal({ open, close, success, submit }: { open: boolean; close: () => void; success: boolean; submit: (event: React.FormEvent<HTMLFormElement>) => void }) {
-  return <AnimatePresence>{open ? <motion.div className="modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><motion.div className="application-modal" initial={{ opacity: 0, y: 18, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.97 }} transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}>{success ? <div className="application-success"><button className="modal-close" onClick={close} aria-label="Fechar"><X size={20} /></button><div className="apply-success-icon"><CircleCheck size={48} /></div><span className="eyebrow">REGISTRO ENVIADO</span><h2>É assim que a mudança ganha força.</h2><p>Você recebeu <b>+80 XP</b> e <b>+20 moedas</b> por colocar uma skill em prática. A liderança pode usar seu registro como evidência de evolução.</p><button className="primary-button wide" onClick={close}>Voltar para a jornada <Rocket size={18} /></button></div> : <><button className="modal-close" onClick={close} aria-label="Fechar"><X size={20} /></button><div className="modal-heading"><div className="apply-icon"><BriefcaseBusiness size={21} /></div><div><span className="eyebrow">MISSÃO PRÁTICA</span><h2>Apliquei no trabalho</h2></div></div><p className="modal-subcopy">Leva menos de um minuto. Conte uma pequena melhoria — isso também é evoluir.</p><form onSubmit={submit}><label>O que você aplicou?<textarea required placeholder="Ex.: Criei um canal único para atualizações de pedido." /></label><label>Onde aconteceu?<input required placeholder="Ex.: Expedição e Estoque" /></label><label>Qual resultado você percebeu?<textarea required placeholder="Ex.: Menos dúvidas e confirmações mais rápidas." /></label><div className="modal-footer"><span><Zap size={16} fill="currentColor" /> Vale <b>+80 XP</b></span><button type="submit" className="primary-button">Registrar aplicação <Send size={17} /></button></div></form></>}</motion.div></motion.div> : null}</AnimatePresence>;
+  return <AnimatePresence>{open ? <motion.div className="modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><motion.div className="application-modal" initial={{ opacity: 0, y: 18, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 12, scale: 0.97 }} transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}>{success ? <div className="application-success"><button className="modal-close" onClick={close} aria-label="Fechar"><X size={20} /></button><div className="apply-success-icon"><CircleCheck size={48} /></div><span className="eyebrow">REGISTRO ENVIADO</span><h2>Aprender virou resultado.</h2><p>Você recebeu <b>+80 XP</b> e <b>+25 pontos</b> por colocar uma skill em prática. A liderança pode usar seu registro como evidência de evolução.</p><button className="primary-button wide" onClick={close}>Voltar para a jornada <Rocket size={18} /></button></div> : <><button className="modal-close" onClick={close} aria-label="Fechar"><X size={20} /></button><div className="modal-heading"><div className="apply-icon"><BriefcaseBusiness size={21} /></div><div><span className="eyebrow">MISSÃO PRÁTICA</span><h2>Apliquei no trabalho</h2></div></div><p className="modal-subcopy">Leva menos de um minuto. Conte uma pequena melhoria — isso também é evoluir.</p><form onSubmit={submit}><label>O que você aplicou?<textarea required placeholder="Ex.: Criei um canal único para atualizações de pedido." /></label><label>Onde aconteceu?<input required placeholder="Ex.: Expedição e Estoque" /></label><label>Qual resultado você percebeu?<textarea required placeholder="Ex.: Menos dúvidas e confirmações mais rápidas." /></label><div className="modal-footer"><span><Zap size={16} fill="currentColor" /> <b>+80 XP</b> · <Coins size={15} fill="currentColor" /> <b>+25 pontos</b></span><button type="submit" className="primary-button">Registrar aplicação <Send size={17} /></button></div></form></>}</motion.div></motion.div> : null}</AnimatePresence>;
 }
