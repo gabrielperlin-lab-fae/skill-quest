@@ -143,6 +143,8 @@ function Brand({ compact = false }: { compact?: boolean }) {
       <img className="brand-logo-img" src="/manus-storage/brw-logo_2bbe64a6.png" alt="BRW Sports Group" />
       <span className="brand-divider" />
       <span className="brand-product">skill<span>quest</span></span>
+      <span className="brand-divider brand-fae-divider" />
+      <img className="brand-fae-logo" src="/fae-business-logo.png" alt="FAE Business School" />
     </button>
   );
 }
@@ -377,9 +379,6 @@ function Onboarding({ step, setStep, onFinish }: { step: number; setStep: (step:
         </div>
       </div>
       <div className="onboarding-footer">Aprender no trabalho, do seu jeito.</div>
-      <div className="fae-business-mark" aria-label="FAE Business School">
-        <img src="/fae-business-logo.png" alt="FAE Business School" />
-      </div>
     </div>
   );
 }
