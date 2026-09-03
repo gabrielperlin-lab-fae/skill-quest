@@ -124,6 +124,8 @@ const rewards = [
   { id: "visor", name: "Visor Coral", cost: 220, icon: "◖", color: "coral", desc: "Um item raro para a Nova.", stock: 0 },
 ];
 
+const publicAsset = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
+
 function ProgressBar({ value, className = "" }: { value: number; className?: string }) {
   return (
     <div className={`progress-track ${className}`} aria-label={`${value}% concluído`}>
@@ -140,7 +142,7 @@ function ProgressBar({ value, className = "" }: { value: number; className?: str
 function Brand({ compact = false }: { compact?: boolean }) {
   return (
     <button className={`brand ${compact ? "brand-compact" : ""}`} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="BRW Sports Group — Skill Quest">
-      <img className="brand-logo-img" src="/manus-storage/brw-logo_2bbe64a6.png" alt="BRW Sports Group" />
+      <img className="brand-logo-img" src={publicAsset("manus-storage/brw-logo_2bbe64a6.png")} alt="BRW Sports Group" />
       <span className="brand-divider" />
       <span className="brand-product">skill<span>quest</span></span>
       <span className="brand-divider brand-fae-divider" />
@@ -150,7 +152,7 @@ function Brand({ compact = false }: { compact?: boolean }) {
 }
 
 function TinyMascot({ size = "medium", className = "" }: { size?: "small" | "medium" | "large"; className?: string }) {
-  return <img className={`mascot mascot-${size} ${className}`} src="/manus-storage/nova-mascot_445a572d.png" alt="Nova, guia da Skill Quest" />;
+  return <img className={`mascot mascot-${size} ${className}`} src={publicAsset("manus-storage/nova-mascot_445a572d.png")} alt="Nova, guia da Skill Quest" />;
 }
 
 function TopBar({
