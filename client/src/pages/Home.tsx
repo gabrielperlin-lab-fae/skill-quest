@@ -170,7 +170,7 @@ function TopBar({
   streak: number;
   home: () => void;
 }) {
-  const hasBack = !["home", "onboarding"].includes(screen);
+  const hasBack = screen !== "onboarding";
   return (
     <header className="topbar">
       <div className="topbar-inner">
