@@ -41,13 +41,6 @@ jobs:
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
         run: pnpm run build
 
-      - name: Bundle Manus-hosted visual assets for Pages
-        run: |
-          mkdir -p dist/public/manus-storage
-          curl --fail --location --retry 3 \
-            https://skillquest-2nwppwqx.manus.space/manus-storage/nova-mascot_445a572d.png \
-            --output dist/public/manus-storage/nova-mascot_445a572d.png
-
       - name: Add SPA fallback and disable Jekyll processing
         run: |
           cp dist/public/index.html dist/public/404.html

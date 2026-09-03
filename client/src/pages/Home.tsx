@@ -152,7 +152,7 @@ function Brand({ compact = false }: { compact?: boolean }) {
 }
 
 function TinyMascot({ size = "medium", className = "" }: { size?: "small" | "medium" | "large"; className?: string }) {
-  return <img className={`mascot mascot-${size} ${className}`} src={publicAsset("manus-storage/nova-mascot_445a572d.png")} alt="Nova, guia da Skill Quest" />;
+  return <img className={`sports-micro-image sports-micro-${size} ${className}`} src={publicAsset("brw-sports-hero.png")} alt="Atleta em movimento representando esporte e performance" />;
 }
 
 function TopBar({
@@ -372,12 +372,14 @@ function Onboarding({ step, setStep, onFinish }: { step: number; setStep: (step:
           </div>
         </div>
         <div className="onboarding-art">
-          <div className="art-orbit orbit-one" /><div className="art-orbit orbit-two" />
-          <div className="floating-tag tag-xp"><Zap size={15} fill="currentColor" /> +30 XP</div>
-          <div className="floating-tag tag-streak"><Flame size={15} fill="currentColor" /> sequência</div>
-          <div className="mascot-halo" />
-          <TinyMascot size="large" />
-          <div className="mascot-speech">Oi, eu sou a Nova.<br />Bora evoluir?</div>
+          <div className="sports-hero-frame">
+            <img
+              className="sports-hero-image"
+              src={publicAsset("brw-sports-hero.png")}
+              alt="Atleta em movimento representando esporte, performance e inovação da BRW Sports Group"
+            />
+            <div className="sports-hero-overlay" aria-hidden="true" />
+          </div>
         </div>
       </div>
       <div className="onboarding-footer">Performance que sai do treino e vira resultado.</div>
@@ -577,7 +579,7 @@ function StoreScreen({ coins, purchased, redeemed, stockById, requestPurchase }:
   return (
     <div className="store-screen page-width">
       <section className="store-hero"><div><span className="eyebrow">🎁 RECOMPENSAS</span><h1>Loja da jornada</h1><p>Use os pontos conquistados nas missões para resgatar recompensas.</p></div><div className="coin-balance"><Coins size={25} fill="currentColor" /><div><span>SEU SALDO EM PONTOS</span><b>{coins}</b></div></div></section>
-      <div className="nova-shop-note"><TinyMascot size="small" /><p><b>Como funciona:</b> XP faz você subir de nível. <b>Pontos</b> são o saldo usado nesta loja — e não entram em dinheiro real.</p></div>
+      <div className="nova-shop-note"><TinyMascot size="small" /><p><b>Como entrar no jogo:</b> XP faz você subir de nível. <b>Pontos</b> são o saldo usado nesta loja — e não entram em dinheiro real.</p></div>
       <section className="reward-grid">{rewards.map((reward) => { const isPurchased = purchased.includes(reward.id); const affordable = coins >= reward.cost; const stock = stockById[reward.id] ?? 0; const available = stock > 0; return <article className={`reward-card ${reward.color}`} key={reward.id}><div className="reward-card-top"><div className="reward-symbol">{reward.icon}</div><span className="limited-tag">{!available ? "ESGOTADO" : "ATIVO"}</span></div><h2>{reward.name}</h2><p>{reward.desc}</p><small className="reward-stock">{available ? `${stock} disponíveis` : "Estoque encerrado"}</small><button disabled={isPurchased || !available || !affordable} onClick={() => requestPurchase(reward)}>{isPurchased ? <><Check size={16} /> Resgatado</> : !available ? "Esgotado" : !affordable ? <>Faltam {reward.cost - coins} pontos</> : <><Coins size={16} fill="currentColor" /> {reward.cost} pontos · Resgatar</>}</button></article>; })}</section>
       <section className="redemption-history"><div className="section-heading"><div><span className="eyebrow">MEUS RESGATES</span><h2>O que você já trocou</h2></div></div>{redeemed.length === 0 ? <div className="empty-state"><Gift size={25} /><b>Você ainda não resgatou nenhuma recompensa.</b><span>Complete missões para ganhar pontos.</span></div> : <div className="redemption-list">{redeemed.map((id, index) => { const reward = rewards.find((item) => item.id === id); return reward ? <div className="redemption-row" key={`${id}-${index}`}><span>{reward.icon}</span><div><b>{reward.name}</b><small>{reward.cost} pontos · 02/09/2026</small></div><strong>Entregue ✓</strong></div> : null; })}</div>}</section>
       <div className="store-footnote"><Gift size={18} /><span>Mais itens aparecem conforme você evolui. Sem punição, sem pressão.</span></div>
