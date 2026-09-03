@@ -377,6 +377,9 @@ function Onboarding({ step, setStep, onFinish }: { step: number; setStep: (step:
         </div>
       </div>
       <div className="onboarding-footer">Aprender no trabalho, do seu jeito.</div>
+      <div className="fae-business-mark" aria-label="FAE Business School">
+        <img src="/fae-business-logo.png" alt="FAE Business School" />
+      </div>
     </div>
   );
 }
